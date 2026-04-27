@@ -1,0 +1,263 @@
+<!<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKM ENERGY - Terminal Trading</title>
+    <style>
+        :root {
+            --bg-dark: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-gray: #8b949e;
+            --accent-orange: #ffaa00;
+            --accent-blue: #0044ff;
+            --accent-green: #0ecb81;
+            --accent-red: #f6465d;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container { width: 100%; max-width: 480px; }
+        header h1 { color: var(--accent-orange); text-align: center; font-size: 1.1rem; text-transform: uppercase; margin: 15px 0; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .stat-card { background: var(--card-bg); padding: 12px; border-radius: 6px; text-align: center; border: 1px solid var(--border-color); }
+        .stat-card.full-width { grid-column: span 2; }
+        .label-stats { color: var(--text-gray); font-size: 0.65rem; text-transform: uppercase; }
+        .val-stats { font-weight: bold; font-size: 1.1rem; margin: 5px 0 0 0; }
+
+        .section-card { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border-color); }
+        .border-blue { border: 1px solid var(--accent-blue); }
+        .border-gray { border: 1px solid #333; }
+
+        .input-group { margin-bottom: 12px; }
+        label { display: block; color: var(--text-gray); font-size: 0.8rem; margin-bottom: 5px; }
+        input, select { width: 100%; background: #0d1117; border: 1px solid var(--border-color); color: white; padding: 10px; border-radius: 6px; box-sizing: border-box; }
+
+        .checklist-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; margin-bottom: 10px; line-height: 1.3; }
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+
+        .alert-box { background: #1c2128; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid transparent; font-size: 0.85rem; line-height: 1.5; }
+        .alert-blue { border-left-color: var(--accent-blue); }
+        .alert-green { border-left-color: var(--accent-green); }
+        .alert-red { border-left-color: var(--accent-red); }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+
+        .protocole-container { border: 1px solid var(--accent-orange); border-radius: 10px; padding: 15px; background: var(--card-bg); margin-bottom: 15px; }
+        .protocole-title { color: var(--accent-orange); font-weight: bold; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 1rem; }
+        .sub-box { background: #1c2128; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid transparent; }
+        .sub-red { border-left-color: var(--accent-red); }
+        .sub-green { border-left-color: var(--accent-green); }
+        .sub-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; }
+        .sub-box ul { margin: 0; padding-left: 15px; font-size: 0.8rem; color: #ccc; }
+        .sub-box li { margin-bottom: 8px; }
+
+        .btn-primary { width: 100%; background: var(--accent-green); color: #000; font-weight: bold; border: none; padding: 14px; border-radius: 6px; cursor: pointer; margin: 10px 0; }
+        .table-header { background: var(--accent-blue); display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr 0.5fr; padding: 8px; font-size: 0.65rem; font-weight: bold; text-align: center; }
+        .log-row { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr 0.5fr; padding: 10px 5px; font-size: 0.7rem; border-bottom: 1px solid var(--border-color); text-align: center; align-items: center; }
+        .btn-reset { background: transparent; color: var(--text-gray); border: 1px solid var(--border-color); padding: 6px 10px; margin-top: 15px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+        
+        .orange-text { color: var(--accent-orange); font-weight: bold; }
+        .green-text { color: var(--accent-green); font-weight: bold; }
+        .red-text { color: var(--accent-red); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header><h1>FKM ENERGY - TERMINAL TRADING</h1></header>
+
+        <div class="stats-grid">
+            <div class="stat-card"><p class="label-stats">BILAN JOUR</p><p id="stat-day" class="val-stats">0.00 $</p></div>
+            <div class="stat-card"><p class="label-stats">BILAN SEMAINE</p><p id="stat-week" class="val-stats">0.00 $</p></div>
+            <div class="stat-card"><p class="label-stats">BILAN MOIS</p><p id="stat-month" class="val-stats">0.00 $</p></div>
+            <div class="stat-card"><p class="label-stats">BILAN ANNÉE</p><p id="stat-year" class="val-stats">0.00 $</p></div>
+            <div class="stat-card full-width"><p class="label-stats">PERFORMANCE %</p><p id="stat-perf" class="val-stats green-text">0.0%</p></div>
+        </div>
+
+        <div class="section-card border-blue">
+            <div class="input-group">
+                <label>Capital Initial ($)</label>
+                <input type="number" id="cap-init" value="100" oninput="updateCalculs()">
+            </div>
+            <div class="input-group">
+                <label>Objectif Jour ($)</label>
+                <input type="number" id="obj-jour" value="10" oninput="updateCalculs()">
+            </div>
+            <div class="display-box">
+                <label class="label-stats">CAPITAL ACTUEL ($)</label>
+                <div id="view-cap-actuel" class="orange-text" style="font-size: 1.4rem;">100.00 $</div>
+                <div id="view-reste-obj" class="orange-text" style="font-size: 0.85rem;">Reste : 10.00 $</div>
+            </div>
+            <div class="input-group">
+                <label>Risque / Trade (%)</label>
+                <select id="risk-pct" onchange="updateCalculs()">
+                    <option value="2">2% (Normal)</option>
+                    <option value="5">5% (Agressif)</option>
+                </select>
+            </div>
+            <div class="display-box">
+                <label class="label-stats">Perte Max ($)</label>
+                <div id="view-perte-max" class="red-text" style="font-size: 1.2rem;">2.00 $</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="orange-text" style="font-size: 0.9rem; margin-top:0;">✅ CHECK-LIST AVANT TRADE</h3>
+            <div class="checklist-item"><input type="checkbox"> <span>H1/M15 : RSI entre 30 et 70 (Filtre Sécurité)</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span>M1 : Rejet EMA 50 ou EMA 50 croise 200</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span>M1 : Stochastique en zone extrême</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span>M1 : RSI en confluence</span></div>
+        </div>
+
+        <div class="alert-box alert-blue">
+            <strong>FILTRE HTF (H1 / M15) :</strong> ZONE OK = RSI entre 30 et 70. <br>
+            <strong>STOP :</strong> Achat interdit si RSI > 70 | Vente interdite si RSI < 30.
+        </div>
+
+        <div class="alert-box alert-green">
+            <span class="dot" style="background:var(--accent-green)"></span><strong>ACHAT (M1)</strong><br>
+            <span style="color:var(--text-gray); font-size:0.75rem;">H1/M15 RSI < 70 + M1 EMA + Stoch sous 20 + RSI sous 35.</span>
+        </div>
+
+        <div class="alert-box alert-red">
+            <span class="dot" style="background:var(--accent-red)"></span><strong>VENTE (M1)</strong><br>
+            <span style="color:var(--text-gray); font-size:0.75rem;">H1/M15 RSI > 30 + M1 EMA + Stoch sur 80 + RSI sur 65.</span>
+        </div>
+
+        <div class="protocole-container">
+            <div class="protocole-title">📊 PROTOCOLE DE CLÔTURE</div>
+            <div class="sub-box sub-red">
+                <h4>1. SORTIE DE SÉCURITÉ (STOP LOSS)</h4>
+                <ul>
+                    <li><strong>Achat :</strong> Clôture si bougie M1 clôture sous l'EMA 50.</li>
+                    <li><strong>Vente :</strong> Clôture si bougie M1 clôture au-dessus de l'EMA 50.</li>
+                    <li><strong>Hard Stop :</strong> Respecter la Perte Max de <span class="orange-text" id="perte-max-text">2.00 $</span>.</li>
+                </ul>
+            </div>
+            <div class="sub-box sub-green">
+                <h4>2. PRISE DE PROFIT (TAKE PROFIT)</h4>
+                <ul>
+                    <li><strong>Objectif RSI :</strong> Sortie zone opposée (70 Achat / 30 Vente).</li>
+                    <li><strong>Signal Stoch :</strong> Clôture si croisement inverse en zone extrême.</li>
+                    <li><strong>Règle d'Or :</strong> Si profit = <strong>3% du capital</strong>, sécuriser à BE.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-card border-gray">
+            <h3 class="orange-text" style="font-size: 0.9rem; margin-top:0;">📓 JOURNAL DE BORD</h3>
+            <div class="input-group">
+                <select id="in-indice">
+                    <option value="V75 (Légende)">V75 (Légende)</option>
+                    <option value="V100 (Rapide)">V100 (Rapide)</option>
+                    <option value="V10 (Stable)">V10 (Stable)</option>
+                    <option value="V25 (Modéré)">V25 (Modéré)</option>
+                    <option value="V50 (Équilibré)">V50 (Équilibré)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <select id="in-result">
+                    <option value="Gain">Gain (TP)</option>
+                    <option value="Perte">Perte (SL)</option>
+                    <option value="Breakeven">Breakeven</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="number" id="in-pnl" placeholder="Montant P&L $">
+            </div>
+            <button class="btn-primary" onclick="addTrade()">AJOUTER AU JOURNAL</button>
+            <div class="table-header">
+                <span>HEURE</span><span>INDICE</span><span>RÉSULTAT</span><span>P&L</span><span>X</span>
+            </div>
+            <div id="log-container"></div>
+            <button class="btn-reset" onclick="resetLogs()">Effacer l'historique</button>
+        </div>
+    </div>
+
+    <script>
+        let data = JSON.parse(localStorage.getItem('fkm_trading_v3') || '{"logs":[]}');
+
+        function updateCalculs() {
+            const cap = parseFloat(document.getElementById('cap-init').value) || 0;
+            const obj = parseFloat(document.getElementById('obj-jour').value) || 0;
+            const risk = parseFloat(document.getElementById('risk-pct').value) || 0;
+
+            const totalPnl = data.logs.reduce((sum, t) => sum + t.pnl, 0);
+            const actuel = cap + totalPnl;
+            const pMax = (actuel * (risk/100)).toFixed(2);
+
+            document.getElementById('view-cap-actuel').innerText = actuel.toFixed(2) + " $";
+            document.getElementById('view-perte-max').innerText = pMax + " $";
+            document.getElementById('perte-max-text').innerText = pMax + " $";
+            
+            // --- CORRECTION OBJECTIF ---
+            const reste = obj - totalPnl;
+            const viewReste = document.getElementById('view-reste-obj');
+            if (reste <= 0) {
+                viewReste.innerText = "🎯 Objectif Atteint !";
+                viewReste.className = "green-text";
+                viewReste.style.fontSize = "0.85rem";
+            } else {
+                viewReste.innerText = "Reste : " + reste.toFixed(2) + " $";
+                viewReste.className = "orange-text";
+                viewReste.style.fontSize = "0.85rem";
+            }
+
+            document.getElementById('stat-day').innerText = totalPnl.toFixed(2) + " $";
+            document.getElementById('stat-week').innerText = totalPnl.toFixed(2) + " $";
+            document.getElementById('stat-month').innerText = totalPnl.toFixed(2) + " $";
+            document.getElementById('stat-year').innerText = totalPnl.toFixed(2) + " $";
+            
+            const perf = ((totalPnl / cap) * 100).toFixed(1);
+            document.getElementById('stat-perf').innerText = perf + "%";
+            document.getElementById('stat-perf').className = perf >= 0 ? "val-stats green-text" : "val-stats red-text";
+        }
+
+        function addTrade() {
+            const res = document.getElementById('in-result').value;
+            let pnl = parseFloat(document.getElementById('in-pnl').value) || 0;
+            if(res === "Perte") pnl = -Math.abs(pnl);
+            if(res === "Breakeven") pnl = 0;
+
+            data.logs.push({
+                h: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
+                indice: document.getElementById('in-indice').value,
+                res: res,
+                pnl: pnl
+            });
+            localStorage.setItem('fkm_trading_v3', JSON.stringify(data));
+            document.getElementById('in-pnl').value = "";
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('log-container');
+            container.innerHTML = data.logs.slice().reverse().map((t, i) => `
+                <div class="log-row">
+                    <span>${t.h}</span>
+                    <span style="font-size:0.6rem; color:var(--text-gray)">${t.indice}</span>
+                    <span style="color:${t.pnl>0?'var(--accent-green)':(t.pnl<0?'var(--accent-red)':'white')}">${t.res}</span>
+                    <span style="font-weight:bold">${t.pnl.toFixed(2)}</span>
+                    <span onclick="del(${data.logs.length-1-i})" style="color:red; cursor:pointer">✕</span>
+                </div>
+            `).join('');
+            updateCalculs();
+        }
+
+        function del(i) { data.logs.splice(i,1); localStorage.setItem('fkm_trading_v3', JSON.stringify(data)); render(); }
+        function resetLogs() { if(confirm("Supprimer l'historique ?")) { data.logs = []; render(); } }
+
+        window.onload = render;
+    </script>
+</body>
+</html>
